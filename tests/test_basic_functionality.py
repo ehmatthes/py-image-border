@@ -10,61 +10,17 @@ from PIL import Image, ImageChops
 
 TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-# --- Helper used in the tests. ---
+# --- Helper functions ---
 
-def readable_file_size(in_bytes: int) -> str:
-    """Convert bytes to human-readable KB, MB, or GB
+def check_images_equal(path_modified, path_reference):
+    """Compare two images, and return True if they're visually equivalent.
 
-    Args:
-        in_bytes: input bytes
-
-    Returns:
-        str
+    Currently, this is a pixel-by-pixel comparison.
     """
-    for unit in ["B", "KB", "MB", "GB"]:
-        if in_bytes < 1024:
-            break
-        in_bytes /= 1024
-    return f"{in_bytes:.2f} {unit}"
+    img_modified = Image.open(path_modified).convert("RGB")
+    img_reference = Image.open(path_reference).convert("RGB")
 
-
-def are_images_equal(path1: Path | str, path2: Path | str) -> bool:
-    """Check if two image files are visually equal pixel-wise
-
-    Args:
-        path1: image1 file path
-        path2: image2 file path
-
-    Returns:
-        bool: True - visually equal, False - not visually equal
-    """
-    size1 = getsize(path1)
-    m_ts1 = datetime.fromtimestamp(getmtime(path1)).strftime(TS_FORMAT)
-    with Image.open(path1) as img1:
-        meta1 = {
-            "file_size": readable_file_size(size1),
-            "file_ts": m_ts1,
-            "format": img1.format,
-            "size": img1.size,
-            "mode": img1.mode,
-            "info": img1.info,
-        }
-        data1 = img1.convert("RGB")
-    size2 = getsize(path2)
-    m_ts2 = datetime.fromtimestamp(getmtime(path2)).strftime(TS_FORMAT)
-    with Image.open(path2) as img2:
-        meta2 = {
-            "file_size": readable_file_size(size2),
-            "file_ts": m_ts2,
-            "format": img2.format,
-            "size": img2.size,
-            "mode": img2.mode,
-            "info": img2.info,
-        }
-        data2 = img2.convert("RGB")
-    print(f"Meta of {path1}:\n{json.dumps(meta1, indent=2)}")
-    print(f"Meta of {path2}:\n{json.dumps(meta2, indent=2)}")
-    return ImageChops.difference(data1, data2).getbbox() is None
+    return ImageChops.difference(img_modified, img_reference).getbbox() is None
 
 
 # --- Tests for correct usage. ---
@@ -152,10 +108,7 @@ def test_make_transparent():
     cmd_parts = cmd.split()
 
     subprocess.run(cmd_parts)
-    # assert filecmp.cmp(path_modified, path_reference)
-    # JL 2025-08-12: The metadata or compression can make PNG files binary different
-    # even if they look the same. Fix: use Pillow library to compare pixel equality.
-    assert are_images_equal(path_modified, path_reference) is True
+    assert check_images_equal(path_modified, path_reference)
 
 
 # --- Tests for incorrect usage. ---
