@@ -38,7 +38,7 @@ def test_default_border():
 
     output = subprocess.run(cmd_parts, capture_output=True)
     output_str = output.stdout.decode()
-    assert filecmp.cmp(path_modified, path_reference)
+    assert check_images_equal(path_modified, path_reference)
     assert f"New image saved at {path_modified}" in output_str
 
 def test_15px_border():
@@ -53,7 +53,7 @@ def test_15px_border():
     cmd_parts = cmd.split()
 
     subprocess.run(cmd_parts)
-    assert filecmp.cmp(path_modified, path_reference)
+    assert check_images_equal(path_modified, path_reference)
 
 def test_padding_only():
     """Test that you can add padding to an image."""
@@ -66,7 +66,7 @@ def test_padding_only():
     cmd_parts = cmd.split()
 
     subprocess.run(cmd_parts)
-    assert filecmp.cmp(path_modified, path_reference)
+    assert check_images_equal(path_modified, path_reference)
 
 def test_custom_color_only():
     """Test that you can set a custom border color."""
@@ -79,7 +79,7 @@ def test_custom_color_only():
     cmd_parts = cmd.split()
 
     subprocess.run(cmd_parts)
-    assert filecmp.cmp(path_modified, path_reference)
+    assert check_images_equal(path_modified, path_reference)
 
 def test_padding_and_border():
     """Test that you can set custom padding and border width."""
@@ -95,7 +95,7 @@ def test_padding_and_border():
     cmd_parts = cmd.split()
 
     subprocess.run(cmd_parts)
-    assert filecmp.cmp(path_modified, path_reference)
+    assert check_images_equal(path_modified, path_reference)
 
 def test_make_transparent():
     """Test that making the background transparent works."""
