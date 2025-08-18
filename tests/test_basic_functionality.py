@@ -1,9 +1,7 @@
 """Initial tests of basic functionality."""
 
-from datetime import datetime
-from os.path import getsize, getmtime
 from pathlib import Path
-import filecmp, json, subprocess
+import subprocess
 
 from PIL import Image, ImageChops
 
