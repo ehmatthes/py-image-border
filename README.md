@@ -13,6 +13,12 @@ Installation sets up an `add-border` shortcut, so you don't need to use any `pyt
 $ python -m py_image_border.add_border my_screenshot.png
 ```
 
+With uv, you can use `py-image-border` without installing anything manually:
+
+```
+$ uvx --from py-image-border add-border my_screenshot.png
+```
+
 Installation
 ---
 Install the package with `pip`:
